@@ -1,0 +1,62 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: dev
+provisioner: kubernetes.io/gce-pd
+volumeBindingMode: WaitForFirstConsumer
+reclaimPolicy: Retain
+parameters:
+  type: pd-standard
+  fstype: ext4
+  replication-type: none
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dev-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+  storageClassName: dev
+  # selector:
+  #   matchLabels:
+  #     release: "stable"
+  #   matchExpressions:
+  #     - {key: environment, operator: In, values: [dev]}
+
+# ---
+
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: dev-pv
+# spec:
+#   storageClassName: "dev"
+#   # claimRef:
+#   #   name: foo-pvc
+#   #   namespace: foo
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dev-pv-pvc
+spec:
+  restartPolicy: Never
+  volumes:
+    - name: vol
+      persistentVolumeClaim:
+        claimName: dev-pvc
+  containers:
+  - name: persistent-tutorial
+    image: "alpine"
+    command: ["/bin/sh", "-c", "sleep 1000000"]
+    volumeMounts:
+    - name: vol
+      mountPath: /tmp/persistent-tutorial
