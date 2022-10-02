@@ -6,3 +6,6 @@ ffmpeg -f avfoundation -framerate 30 -pix_fmt yuyv422 -i "0" -f h264 rtmp://loca
 
 
 ffplay rtmp://localhost/live/livestream
+
+ffmpeg -rtmp_buffer 3000  -rtmp_live  live -f live_flv -i rtmp://localhost/live/livestream \
+-filter_complex "[0]copy[base]" -map "[base]" -f matroska - | ffplay -i -

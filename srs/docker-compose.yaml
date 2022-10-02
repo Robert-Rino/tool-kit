@@ -6,34 +6,11 @@ x-environment: &environment
   FOO: BAR
 
 services:
-  # frontend:
-  #   # image: swaglive/nginx:1.22.0-alpine3.16
-  #   image: swaglive/nginx@sha256:bdd909fafdc9b2ec4052ab59da9c405b3208eece3d83d53f710da70bc0df1107
-  #   volumes:
-  #   - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
-  #   - ./config/njs/:/etc/nginx/js/:ro
-  #   - ./fixtures/maxmind/GeoIP2-City.mmdb:/usr/local/share/GeoIP/GeoIP2-City.mmdb:ro
-  #   - ./staticfiles:/usr/share/nginx/html:ro
-  #   environment:
-  #     VERSION: HEAD
-  #   ports:
-  #   - "8000:80"
-  #   depends_on:
-  #   - web
-  #   - imgproxy
-  #   << : *defaults
   srs:
     image: ossrs/srs:v5
     command: /usr/local/srs/objs/srs -c conf/srt.conf
-    # build:
-    #   context: .
-    # environment:
-    #   << : *environment
-    #   http_proxy: http://squid:3128
     volumes:
     - ./srt.conf:/usr/local/srs/conf/srt.conf
-    # - .:/usr/src/app/
-    # - ipython:/root/.ipython/
     ports:
     - "8080:8080"
     - "1935:1935"
