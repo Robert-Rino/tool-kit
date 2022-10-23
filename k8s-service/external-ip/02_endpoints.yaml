@@ -1,0 +1,10 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  # the name here should match the name of the Service
+  name: mongo-external
+subsets:
+  - addresses:
+      - ip: 35.221.148.190
+    ports:
+      - port: 27017
