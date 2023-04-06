@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    app: nino-test
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+    env:
+    - name: nginx.conf
+      value:
+      - |
+      load_module             modules/ngx_http_js_module.so;
+      load_module             modules/ngx_http_geoip2_module.so;
+      env                     VERSION;
+      worker_processes        auto;
+
+      events {
+      }
+
+      http {
+        js_import                   js/nginx.js;
+
+        geoip2 /usr/local/share/GeoIP/GeoIP2-City.mmdb {
+          $geoip2_country_code source=$remote_addr country iso_code;
+          $geoip2_city_geoname_id source=$remote_addr city geoname_id;
+        }
+
+        real_ip_header              X-Forwarded-For;
+        real_ip_recursive           on;
+        set_real_ip_from            172.0.0.0/8;
+        # Google Cloud Loadbalancer IP subnet
+        set_real_ip_from            130.211.0.0/22;
+        set_real_ip_from            35.191.0.0/16;
+        set_real_ip_from            34.96.107.228/32;
+        set_real_ip_from            35.227.233.133/32;
+        set_real_ip_from            34.102.228.8/32;
+        set_real_ip_from            35.190.25.81/32;
+        set_real_ip_from            10.0.0.0/8;
+
+        upstream api {
+          server                    web:8000;
+          keepalive                 4;
+        }
+
+        upstream storage.googleapis.com {
+          server                    storage.googleapis.com:443;
+          keepalive                 4;
+        }
+
+        upstream imgproxy {
+          server imgproxy:8080;
+        }
+
+        map $http_user_agent $blacklisted_ua {
+          default                   0;
+          "~Java"		                1;
+        }
+
+        map $uri $expires {
+          default                         "";
+          ~\.(m3u8|mpd)$                  "+1s";
+        }
+
+        map $uri $cache_control {
+          default                         "";
+          ~\-00000\.(\w+)\.mp4$           "public, max-age=15, must-revalidate";
+          ~\.(mp4|m4s)$                   "public, max-age=30, must-revalidate";
+          ^/trailer\.mp4$                 "public, max-age=120, s-maxage=60, stale-while-revalidate=300, immutable";
+          ~\.(m3u8|mpd)$                  "public, must-revalidate";
+        }
+
+        server {
+            listen                          80 reuseport default;
+            sendfile                        on;
+            sendfile_max_chunk              512k;
+            aio                             threads;
+            tcp_nopush                      on;
+            tcp_nodelay                     on;
+            keepalive_timeout               650s;
+            keepalive_requests              1000;
+            types {
+              application/dash+xml          mpd;
+              application/vnd.apple.mpegurl m3u8;
+              video/mp4                     mp4 m4s;
+            }
+            root                            /usr/share/nginx/html;
+            absolute_redirect               off;
+            add_header                      "Cache-Control" "public, max-age=30, must-revalidate";
+            expires                         modified $expires;
+            location = / {
+              return 200;
+            }
+
+            location / {
+                return 404;
+              }
+          }
+      }
+

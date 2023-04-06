@@ -1,0 +1,14 @@
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: my-backendconfig
+spec:
+  cdn:
+    cachePolicy:
+      includeHost: false
+      includeProtocol: false
+      includeQueryString: false
+    enabled: true
+  connectionDraining:
+    drainingTimeoutSec: 30
+  timeoutSec: 10
