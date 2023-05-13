@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Generated with https://github.com/google/shaka-packager version v2.5.1-9f11077-release-->
+<MPD xmlns="urn:mpeg:dash:schema:mpd:2011" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:mpeg:dash:schema:mpd:2011 DASH-MPD.xsd" profiles="urn:mpeg:dash:profile:isoff-live:2011" minBufferTime="PT3S" type="dynamic" publishTime="2022-10-25T13:51:41Z" availabilityStartTime="2022-10-25T13:50:54Z" minimumUpdatePeriod="PT3S" timeShiftBufferDepth="PT30S" suggestedPresentationDelay="PT3S">
+  <Period id="0" start="PT0S">
+    <AdaptationSet id="0" contentType="video" width="960" height="400" frameRate="15360/512" segmentAlignment="true" par="12:5">
+      <Representation id="0" bandwidth="1223923" codecs="avc1.f4001f" mimeType="video/mp4" sar="1:1">
+        <SegmentTemplate timescale="15360" initialization="preview-b30-00000.clear.mp4" media="preview-b30-$Number%05d$.clear.m4s" startNumber="190">
+          <SegmentTimeline>
+            <S t="8709120" d="46080" r="10"/>
+          </SegmentTimeline>
+        </SegmentTemplate>
+      </Representation>
+    </AdaptationSet>
+    <AdaptationSet id="1" contentType="audio" segmentAlignment="true">
+      <Representation id="1" bandwidth="101918" codecs="mp4a.40.2" mimeType="audio/mp4" audioSamplingRate="48000">
+        <AudioChannelConfiguration schemeIdUri="urn:mpeg:dash:23003:3:audio_channel_configuration:2011" value="2"/>
+        <SegmentTemplate timescale="48000" initialization="audio-00000.clear.mp4" media="audio-$Number%05d$.clear.m4s" startNumber="190">
+          <SegmentTimeline>
+            <S t="27216000" d="144000" r="10"/>
+          </SegmentTimeline>
+        </SegmentTemplate>
+      </Representation>
+    </AdaptationSet>
+  </Period>
+</MPD>
