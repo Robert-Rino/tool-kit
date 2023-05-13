@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gcs
+  labels:
+    app: gcs
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gcs
+  template:
+    metadata:
+      labels:
+        app: gcs
+    spec:
+      containers:
+      - name: gcs
+        env:
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/service-account-powerfule.json
+        image: swaglive/google-cloud-storage:0.2.0
+        ports:
+        - name: gcs-port
+          containerPort: 80
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/secrets/google
+          name: google-cloud-key
+        readinessProbe:
+          # HACK: check a exist file.
+          httpGet:
+            path: /nino-dev/image/huskie
+            port: gcs-port
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: google-cloud-key
+        secret:
+          secretName: gcs-editor

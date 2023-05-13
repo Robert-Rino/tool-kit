@@ -1,0 +1,2 @@
+- Reserve static IP
+    - https://cloud.google.com/kubernetes-engine/docs/how-to/managed-certs
