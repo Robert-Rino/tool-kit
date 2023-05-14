@@ -1,0 +1,12 @@
+version: '3.6'
+
+services:
+  web: 
+    image: a901002666/sentry-example
+    command: flask run --host 0.0.0.0 --port 8000 --reload
+    env_file:
+      - .env
+    volumes: 
+    - ./:/usr/src/app
+    ports:
+      - 8000:8000

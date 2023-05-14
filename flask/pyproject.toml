@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "flask-example"
+version = "0.1.0"
+description = ""
+authors = ["Robert-Rino <a901002666@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+sentry-sdk = {extras = ["flask"], version = "1.22.2"}
+flask = "2.2.3"
+requests = "^2.23.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
