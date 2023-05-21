@@ -43,7 +43,7 @@ trace.set_tracer_provider(trace_provider)
 app = Flask(__name__)
 FlaskInstrumentor().instrument_app(app)
 
-@app.route("/", methods={'POST'})
+@app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 

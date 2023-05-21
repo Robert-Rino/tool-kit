@@ -59,8 +59,8 @@ services:
     restart: on-failure
     volumes:
       - ./uptrace.yml:/etc/uptrace/uptrace.yml
-    environment:
-     - DEBUG=2
+    # environment:
+    #  - DEBUG=2
     ports:
       - '14317:14317'
       - '14318:14318'

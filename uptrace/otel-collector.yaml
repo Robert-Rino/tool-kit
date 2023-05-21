@@ -78,7 +78,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      # processors: [batch]
       exporters: [otlp/uptrace, logging]
     metrics:
       receivers: [otlp]
@@ -86,7 +86,7 @@ service:
       exporters: [otlp/uptrace, logging]
     logs:
       receivers: [otlp]
-      processors: [batch]
+      # processors: [batch]
       exporters: [otlp/uptrace, logging]
 
 # service:
