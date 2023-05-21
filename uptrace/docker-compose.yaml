@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+  web:
+    image: a901002666/opentelemetry:ubutu-python3.10 
+    command : > 
+      opentelemetry-instrument
+      --traces_exporter console 
+      --metrics_exporter console,otlp
+      --logs_exporter console
+      --service_name nino-flask
+      --exporter_otlp_endpoint http://otelcol:4317
+      flask run --host 0.0.0.0 -p 8001 --reload
+    environment:
+      GRPC_DEFAULT_SSL_ROOTS_FILE_PATH: /etc/ssl/certs/ca-certificates.crt
+    volumes: 
+    - .:/usr/src/app
+    ports:
+      - 8001:8001
+
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:22.10
+    restart: on-failure
+    environment:
+      CLICKHOUSE_DB: uptrace
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'localhost:8123/ping']
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    volumes:
+      - ch_data7:/var/lib/clickhouse
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+
+  postgres:
+    image: postgres:15-alpine
+    restart: on-failure
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: uptrace
+      POSTGRES_PASSWORD: uptrace
+      POSTGRES_DB: uptrace
+    # healthcheck:
+    #   test: ['CMD-SHELL', 'pg_isready', '-U', 'uptrace']
+    #   interval: 1s
+    #   timeout: 1s
+    #   retries: 30
+    volumes:
+      - 'pg_data4:/var/lib/postgresql/data/pgdata'
+    ports:
+      - '5432:5432'
+
+  uptrace:
+    image: 'uptrace/uptrace:1.4.5'
+    #image: 'uptrace/uptrace-dev:latest'
+    restart: on-failure
+    volumes:
+      - ./uptrace.yml:/etc/uptrace/uptrace.yml
+    environment:
+     - DEBUG=2
+    ports:
+      - '14317:14317'
+      - '14318:14318'
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.77.0
+    restart: on-failure
+    user: '0:0' # required for logs
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT:  uptrace:14317
+
+    volumes:
+      - ./otel-collector.yaml:/etc/otelcol-contrib/config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log:ro
+    ports:
+      - 4317:4317
+      - 4318:4318
+      - 8888:8888
+
+  # mailhog:
+  #   image: mailhog/mailhog:v1.0.1
+  #   restart: on-failure
+  #   ports:
+  #     - '8025:8025'
+
+  # vector:
+  #   image: timberio/vector:0.28.X-alpine
+  #   volumes:
+  #     - ./vector.toml:/etc/vector/vector.toml:ro
+
+volumes:
+  ch_data7:
+  pg_data4:
