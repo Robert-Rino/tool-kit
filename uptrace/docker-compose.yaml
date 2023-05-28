@@ -2,17 +2,22 @@ version: '3'
 
 services:
   web:
-    image: a901002666/opentelemetry:ubutu-python3.10 
+    build: .
+    # image: a901002666/opentelemetry:ubutu-python3.10 
+    # command: sleep 1000
     command : > 
       opentelemetry-instrument
       --traces_exporter console 
       --metrics_exporter console,otlp
       --logs_exporter console
-      --service_name nino-flask
+      --service_name nino-flask-cli
       --exporter_otlp_endpoint http://otelcol:4317
       flask run --host 0.0.0.0 -p 8001 --reload
+    # command: opentelemetry-instrument flask run --host 0.0.0.0 -p 8001 --reload
     environment:
       GRPC_DEFAULT_SSL_ROOTS_FILE_PATH: /etc/ssl/certs/ca-certificates.crt
+    # env_file:
+    #   - .env
     volumes: 
     - .:/usr/src/app
     ports:
@@ -54,11 +59,12 @@ services:
       - '5432:5432'
 
   uptrace:
-    image: 'uptrace/uptrace:1.4.5'
+    image: 'uptrace/uptrace:1.4.8'
     #image: 'uptrace/uptrace-dev:latest'
     restart: on-failure
     volumes:
       - ./uptrace.yml:/etc/uptrace/uptrace.yml
+      - ./config:/usr/local/share/ca-certificates/
     # environment:
     #  - DEBUG=2
     ports:
