@@ -1,5 +1,7 @@
-# Create certificate
+# mTLS example
+REF: https://medium.com/geekculture/mtls-with-nginx-and-nodejs-e3d0980ed950
 
+## Generate CA
 ```shell
 openssl req \
   -newkey rsa:4096 \
