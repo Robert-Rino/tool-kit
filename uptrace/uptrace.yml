@@ -178,15 +178,15 @@ listen:
   grpc:
     addr: ':14317'
     # tls:
-    #   cert_file: config/tls/uptrace.crt
-    #   key_file: config/tls/uptrace.key
+    #   cert_file: /usr/local/share/ca-certificates//uptrace.crt
+    #   key_file: /usr/local/share/ca-certificates//uptrace.key
 
   # OTLP/HTTP API and Uptrace API with UI.
   http:
     addr: ':14318'
     # tls:
-    #   cert_file: config/tls/uptrace.crt
-    #   key_file: config/tls/uptrace.key
+    #   cert_file: /usr/local/share/ca-certificates//uptrace.crt
+    #   key_file: /usr/local/share/ca-certificates//uptrace.key
 
 ##
 ## Various options for Uptrace UI.

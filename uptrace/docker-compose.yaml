@@ -13,7 +13,7 @@ services:
       --service_name nino-flask-cli
       --exporter_otlp_endpoint http://otelcol:4317
       flask run --host 0.0.0.0 -p 8001 --reload
-    # command: opentelemetry-instrument flask run --host 0.0.0.0 -p 8001 --reload
+    # command: flask run --host 0.0.0.0 -p 8001 --reload
     environment:
       GRPC_DEFAULT_SSL_ROOTS_FILE_PATH: /etc/ssl/certs/ca-certificates.crt
     # env_file:
