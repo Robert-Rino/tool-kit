@@ -4,16 +4,22 @@ services:
   web:
     build: .
     # image: a901002666/opentelemetry:ubutu-python3.10 
-    # command: sleep 1000
-    command : > 
-      opentelemetry-instrument
-      --traces_exporter console 
-      --metrics_exporter console,otlp
-      --logs_exporter console
-      --service_name nino-flask-cli
-      --exporter_otlp_endpoint http://otelcol:4317
-      flask run --host 0.0.0.0 -p 8001 --reload
+    # command : > 
+    #   opentelemetry-instrument
+    #   --traces_exporter console,otlp 
+    #   --metrics_exporter console,otlp
+    #   --logs_exporter console
+    #   --service_name nino-flask-cli
+    #   --exporter_otlp_endpoint http://otelcol:4317
+      # flask run --host 0.0.0.0 -p 8001 --reload
     # command: flask run --host 0.0.0.0 -p 8001 --reload
+    command: > 
+      uwsgi 
+      --single-interpreter 
+      --enable-threads 
+      --ini config/uwsgi.ini 
+      --gevent 100 
+      --http 0.0.0.0:8001
     environment:
       GRPC_DEFAULT_SSL_ROOTS_FILE_PATH: /etc/ssl/certs/ca-certificates.crt
     # env_file:
@@ -86,17 +92,6 @@ services:
       - 4317:4317
       - 4318:4318
       - 8888:8888
-
-  # mailhog:
-  #   image: mailhog/mailhog:v1.0.1
-  #   restart: on-failure
-  #   ports:
-  #     - '8025:8025'
-
-  # vector:
-  #   image: timberio/vector:0.28.X-alpine
-  #   volumes:
-  #     - ./vector.toml:/etc/vector/vector.toml:ro
 
 volumes:
   ch_data7:
