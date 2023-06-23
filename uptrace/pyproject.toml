@@ -19,6 +19,7 @@ mongoengine = "^0.27.0"
 celery = "^5.3.1"
 flask-mongoengine = "^1.0.0"
 opentelemetry-instrumentation-pymongo = "^0.39b0"
+redis = {extras = ["hiredis"], version = "^4.5.5"}
 
 
 

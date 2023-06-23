@@ -9,6 +9,7 @@ db = MongoEngine()
 def create_app() -> Flask:
     app = Flask(__name__)
     app.config.from_object('demo.settings.Config')
+    app.config.from_prefixed_env()
     celery_init_app(app)
 
     # NOTE: Need to call instrument before mongoengine initialize.

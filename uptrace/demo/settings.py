@@ -1,7 +1,7 @@
 class Config:
     CELERY = {
         'broker_url': 'redis://redis',
-        'result_backend': 'redis://localhost',    
+        'result_backend': 'redis://redis',    
     }
 
     MONGODB_SETTINGS = {

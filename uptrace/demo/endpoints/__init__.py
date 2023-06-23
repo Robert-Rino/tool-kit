@@ -5,6 +5,8 @@ from flask import Blueprint, request, make_response, Response
 
 from demo.models import User
 
+from demo import tasks
+
 app = Blueprint( 'endpoints', __name__)
 
 
@@ -26,14 +28,15 @@ def create_user():
 
 @app.route('/user/<string:user_id>', methods={'GET'}, endpoint='get_user_by_id')
 def get_user_by_id(user_id: str):
-    
-    if not (user := User.objects.filter(id=user_id).first()):
+    if not (username := tasks.get_username_by_id.delay(
+        user_id=user_id
+    ).get()):
         return Response(status=404)
     
 
     response = make_response({
-        'id': str(user.id),
-        'username': user.username
+        'id': user_id,
+        'username': username,
     })
     return response
 

@@ -28,8 +28,6 @@ services:
     - .:/usr/src/app
     ports:
       - 8001:8001
-
-
   clickhouse:
     image: clickhouse/clickhouse-server:22.10
     restart: on-failure
@@ -45,7 +43,6 @@ services:
     ports:
       - '8123:8123'
       - '9000:9000'
-
   postgres:
     image: postgres:15-alpine
     restart: on-failure
@@ -63,7 +60,6 @@ services:
       - 'pg_data4:/var/lib/postgresql/data/pgdata'
     ports:
       - '5432:5432'
-
   uptrace:
     image: 'uptrace/uptrace:1.4.8'
     #image: 'uptrace/uptrace-dev:latest'
@@ -76,7 +72,6 @@ services:
     ports:
       - '14317:14317'
       - '14318:14318'
-
   otelcol:
     image: otel/opentelemetry-collector-contrib:0.77.0
     restart: on-failure
@@ -92,7 +87,6 @@ services:
       - 4317:4317
       - 4318:4318
       - 8888:8888
-
   mongo:
     image: mongo
     restart: always
@@ -100,6 +94,16 @@ services:
       - mongo:/data/db
     ports: 
       - 27017:27017
+  redis: 
+    image: redis:7.0.11-alpine
+    ports: 
+      - 6379:6379
+  worker:
+    build: .
+    command: celery -A app:celery_app worker --loglevel INFO
+    # command: sleep 1000
+    volumes: 
+    - .:/usr/src/app
 
 volumes:
   ch_data7:
