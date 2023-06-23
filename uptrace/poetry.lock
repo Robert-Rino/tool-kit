@@ -1106,6 +1106,27 @@ setuptools = ">=16.0"
 wrapt = ">=1.0.0,<2.0.0"
 
 [[package]]
+name = "opentelemetry-instrumentation-celery"
+version = "0.39b0"
+description = "OpenTelemetry Celery Instrumentation"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "opentelemetry_instrumentation_celery-0.39b0-py3-none-any.whl", hash = "sha256:7f7c8a6461baed4a67b70d90960fe5ebe77eb37a033c8df8b1153a2960cb4295"},
+    {file = "opentelemetry_instrumentation_celery-0.39b0.tar.gz", hash = "sha256:6e0dbf92ad24a6953bcfd717004a71a082c4c641be4d25471fe25a89c5dda6aa"},
+]
+
+[package.dependencies]
+opentelemetry-api = ">=1.12,<2.0"
+opentelemetry-instrumentation = "0.39b0"
+opentelemetry-semantic-conventions = "0.39b0"
+
+[package.extras]
+instruments = ["celery (>=4.0,<6.0)"]
+test = ["opentelemetry-instrumentation-celery[instruments]", "opentelemetry-test-utils (==0.39b0)", "pytest"]
+
+[[package]]
 name = "opentelemetry-instrumentation-flask"
 version = "0.39b0"
 description = "Flask instrumentation for OpenTelemetry"
@@ -1743,4 +1764,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "3d74e22f921aaa52125f89028ee492bf75e266bf78a3eac029cc05a48130772f"
+content-hash = "455476f6a2576385ec493e02c6d0679feb43f96d0caa4ff1db50271f7cbbc43b"

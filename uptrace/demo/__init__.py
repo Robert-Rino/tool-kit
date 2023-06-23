@@ -1,7 +1,8 @@
 from flask import Flask
-from celery import Celery, Task
+from celery import Celery, Task, signals
 from flask_mongoengine import MongoEngine
 from opentelemetry.instrumentation.pymongo import PymongoInstrumentor
+from opentelemetry.instrumentation.celery import CeleryInstrumentor
 
 
 db = MongoEngine()
@@ -23,6 +24,10 @@ def celery_init_app(app: Flask) -> Celery:
         def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():
                 return self.run(*args, **kwargs)
+
+    @signals.worker_process_init.connect(weak=False)
+    def init_celery_tracing(*args, **kwargs):
+        CeleryInstrumentor().instrument()
 
     celery_app = Celery(app.name, task_cls=FlaskTask)
     celery_app.config_from_object(app.config["CELERY"])
