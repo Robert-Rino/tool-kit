@@ -1,17 +1,19 @@
 from flask import Flask
 from celery import Celery, Task
+from flask_mongoengine import MongoEngine
+from opentelemetry.instrumentation.pymongo import PymongoInstrumentor
+
+
+db = MongoEngine()
 
 def create_app() -> Flask:
     app = Flask(__name__)
-    app.config.from_mapping(
-        CELERY=dict(
-            broker_url="redis://localhost",
-            result_backend="redis://localhost",
-            task_ignore_result=True,
-        ),
-    )
-    app.config.from_prefixed_env()
+    app.config.from_object('demo.settings.Config')
     celery_init_app(app)
+
+    # NOTE: Need to call instrument before mongoengine initialize.
+    PymongoInstrumentor().instrument()
+    db.init_app(app)
     return app
 
 
@@ -26,15 +28,3 @@ def celery_init_app(app: Flask) -> Celery:
     celery_app.set_default()
     app.extensions["celery"] = celery_app
     return celery_app
-
-
-app = create_app()
-app.config['CELERY'] = {
-    'broker_url': 'redis://redis',
-    'result_backend': 'redis://localhost',
-}
-app.config['MONGODB_SETTINGS'] = {
-    'host': 'mongodb://mongo/dev'
-}
-
-celery_app = celery_init_app(app)
