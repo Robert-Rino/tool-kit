@@ -1,6 +1,7 @@
 import os
 import time
 import grpc
+import celery
 
 
 from opentelemetry.instrumentation.pymongo import PymongoInstrumentor
@@ -27,6 +28,8 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from random import randint
 from flask import Flask, request, Response, make_response
 from flask_mongoengine import MongoEngine
+
+from . import app
 
 resource = Resource(
     attributes={"service.name": "myservice", "service.version": "1.0.0"}
@@ -79,16 +82,12 @@ meter = metrics.get_meter("github.com/uptrace/uptrace-python", "1.0.0")
 counter = meter.create_counter("some.prefix.counter", description="TODO")
 
 
-app = Flask(__name__)
-app.config['MONGODB_SETTINGS'] = {
-    'host': 'mongodb://mongo/dev'
-}
+FlaskInstrumentor().instrument_app(app)
+
+# Mongo
 # NOTE: Need to call instrument before mongoengine initialize.
 PymongoInstrumentor().instrument()
 db = MongoEngine(app)
-FlaskInstrumentor().instrument_app(app)
-
-
 class User(db.Document):
     username = db.StringField(required=True)
 
