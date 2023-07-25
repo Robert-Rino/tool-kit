@@ -9,17 +9,19 @@ ENV         POETRY_VERSION=${POETRY_VERSION}
 RUN         apt-get update && \
             apt-get -y install build-essential \
                             curl && \
-            curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/install-poetry.py | python
+            curl -sSL https://install.python-poetry.org | python
                     
 
 ###
 
 FROM        ${base} AS builder
-WORKDIR     /usr/src/app
 
+ENV         FLASK_APP=app.py
 ENV         PATH=/root/.local/bin:$PATH
 ENV         POETRY_VIRTUALENVS_CREATE=false
 ENV         PIP_DISABLE_PIP_VERSION_CHECK=on
+
+WORKDIR     /usr/src/app
 
 COPY        --from=poetry /root/.local /root/.local
 

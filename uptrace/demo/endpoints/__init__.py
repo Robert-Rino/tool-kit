@@ -1,5 +1,4 @@
 import random
-import time
 
 from flask import Blueprint, request, make_response, Response
 
@@ -42,23 +41,5 @@ def get_user_by_id(user_id: str):
 
 
 @app.route("/roll")
-def toll_dice2():
+def roll():
     return str(random.randint(1, 6))
-
-@app.route("/roll-long")
-def roll_dice():
-    # counter.add(1)
-    rolled = random.randint(1, 6)
-    time.sleep(0.1 * rolled)
-    return str(rolled)
-    return str(do_roll())
-
-# def do_roll():
-#     with tracer.start_as_current_span("main") as rollspan:
-#         trace_id = rollspan.get_span_context().trace_id
-#         print(f"trace id: {trace_id:0{32}x}")
-#         res = randint(1, 6)
-#         rollspan.set_attribute("roll.value", res)
-#         # This adds 1 to the counter for the given roll value
-#         # roll_counter.add(1, {"roll.value": res})
-#         return res
