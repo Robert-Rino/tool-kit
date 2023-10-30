@@ -16,6 +16,7 @@ verify:
   container:
     name: verification-curl
     image: curlimages/curl:8.4.0
-    args: ["my-service.default.svc.cluster.local"]
+    command: ["sh", "-c"]
+    args: ['response=$(curl -s my-service.default.svc.cluster.local/debug) && (echo "$response" | grep -q "bug") && exit 1 || exit 0']
   executionMode:
     kubernetesCluster: {}

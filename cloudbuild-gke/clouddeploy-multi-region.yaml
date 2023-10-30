@@ -1,0 +1,50 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: my-demo-app-multi-region
+description: main application pipeline
+serialPipeline:
+  stages:
+  - targetId: cluster-multi
+    profiles: []
+    deployParameters:
+    - values:
+        replicaCount: "1"
+      matchTargetLabels:
+        label1: label1
+    - values:
+        replicaCount: "2"
+      matchTargetLabels:
+        label2: label2
+
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: cluster-multi
+description: production clusters
+multiTarget:
+  targetIds: [cluster-production-a, cluster-production-b]
+
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: cluster-production-a
+  labels:
+    label1: label1
+description: production cluster 1
+gke:
+  cluster: projects/swag-nino-chang/locations/us-central1/clusters/quickstart-cluster-qsprod
+---
+
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: cluster-production-b
+  labels:
+    label2: label2
+description: production cluster 2
+gke:
+  cluster: projects/swag-nino-chang/locations/us-west1/clusters/quickstart-cluster-qsprod2

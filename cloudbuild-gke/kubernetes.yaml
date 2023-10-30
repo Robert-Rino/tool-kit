@@ -6,7 +6,7 @@ metadata:
     app: my-app
   namespace: default
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: my-app
@@ -19,7 +19,10 @@ spec:
       - name: nginx
         image: my-app-image
         ports:
-          - containerPort: 80
+        - containerPort: 80
+        env:
+        - name: DEBUG_MESSAGE
+          value: "Hello World Nino"
 ---
 apiVersion: v1
 kind: Service
@@ -27,6 +30,7 @@ metadata:
   name: my-service
   namespace: default
 spec:
+  type: LoadBalancer
   selector:
     app: my-app
   ports:
