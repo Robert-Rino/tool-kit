@@ -1,0 +1,22 @@
+apiVersion: skaffold/v4beta4
+kind: Config
+manifests:
+  rawYaml:
+  - kubernetes.yaml
+deploy:
+  kubectl: {}
+verify:
+# - name: verification-test
+#   container:
+#     name: verification-echo
+#     image: ubuntu
+#     command: ["/bin/sh"]
+#     args: ["-c", 'echo "Your test or tests would go here."' ]
+- name: verification-curl
+  container:
+    name: verification-curl
+    image: curlimages/curl:8.4.0
+    command: ["sh", "-c"]
+    args: ['response=$(curl -s my-service.default.svc.cluster.local/debug) && (echo "$response" | grep -q "bug") && exit 1 || exit 0']
+  executionMode:
+    kubernetesCluster: {}

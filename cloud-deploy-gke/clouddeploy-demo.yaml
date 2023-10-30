@@ -1,0 +1,37 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: my-canary-demo-app-1
+description: main application pipeline
+serialPipeline:
+  stages:
+  - targetId: cluster-dev
+    profiles: []
+    strategy:
+      canary:
+        runtimeConfig:
+          kubernetes:
+            serviceNetworking:
+              service: "my-service"
+              deployment: "my-deployment"
+        canaryDeployment:
+          percentages: [50]
+          verify: true
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: cluster-dev
+description: development cluster
+gke:
+  cluster: projects/swag-nino-chang/locations/us-central1/clusters/quickstart-cluster-qsdev
+# ---
+
+# apiVersion: deploy.cloud.google.com/v1
+# kind: Target
+# metadata:
+#   name: cluster-production
+# description: production cluster
+# requireApproval: true
+# gke:
+#   cluster: projects/swag-nino-chang/locations/us-central1/clusters/quickstart-cluster-qsprod
