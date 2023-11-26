@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express-express
+  labels:
+    app: mongo-express
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express
+        ports:
+        - name: mongo-express
+          containerPort: 8081
+        env:
+        - name: ME_CONFIG_OPTIONS_EDITORTHEME
+          value: ambiance
+        - name: ME_CONFIG_MONGODB_URL
+          value: mongodb://admin:password@mongo-external.default.svc.cluster.local:27017
