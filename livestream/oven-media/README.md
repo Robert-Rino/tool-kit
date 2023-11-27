@@ -18,9 +18,10 @@ ffmpeg \
 
 
 # Play stream
-ffplay http://:3333/app/stream_4000/llhls.m3u8
+- ffplay (seems no llhls support)
+`ffplay http://:3333/app/stream_4000/llhls.m3u8`
 
-https://4d15-59-124-114-73.ngrok-free.app/app/stream_4000/llhls.m3u8
+- ovenMedia player
+https://demo.ovenplayer.com/
 
 
-https://4d15-59-124-114-73.ngrok-free.app/app/stream_4000/llhls.m3u8
