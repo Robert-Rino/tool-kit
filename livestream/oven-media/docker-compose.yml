@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  oven-media:
+    image: airensoft/ovenmediaengine:0.16.1
+    volumes:
+    - ./logs:/var/log/ovenmediaengine
+    - ./configs:/opt/ovenmediaengine/bin/origin_conf
+    ports:
+    - 4000:4000/udp
+    - 1935:1935
+    - 9999:9999/udp
+    - 9000:9000
+    - 3333:3333
+    - 3478:3478
+    - 10000-10009:10000-10009/udp
+    environment:
+      OME_HOST_IP: '*'
+      OME_ORIGIN_PORT: 9000
+      OME_RTMP_PROV_PORT: 1935
+      OME_SRT_PROV_PORT: 9999/udp
+      OME_MPEGTS_PROV_PORT: 4000/udp
+      OME_LLHLS_STREAM_PORT: 3333
+      OME_LLHLS_STREAM_TLS_PORT: 3334
+      OME_WEBRTC_SIGNALLING_PORT: 3333
+      OME_WEBRTC_SIGNALLING_TLS_PORT: 3334
+      OME_WEBRTC_TCP_RELAY_PORT: 3478
+      OME_WEBRTC_CANDIDATE_PORT: 10000-10004/udp
+    
