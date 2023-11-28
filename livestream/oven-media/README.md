@@ -14,7 +14,8 @@ ffmpeg \
     -c:a aac -r:a 48000 -ac:a 2 \
     -map '[v]' \
     -map 1 \
-    -pes_payload_size 0 -f mpegts udp://127.0.0.1:4000
+    -f tee -use_fifo 1 -y \
+    "[f=mpegts:onfail=ignore:select=\\'v:0,a:0\\']udp://127.0.0.1:4000"
 
 
 # Play stream

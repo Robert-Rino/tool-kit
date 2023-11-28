@@ -13,7 +13,7 @@
 <Bind>
     <Providers>
         <MPEGTS>
-            <Port>4000/udp</Port>
+            <Port>4000,4001/udp</Port>
         </MPEGTS>
     </Providers>
 
@@ -41,13 +41,24 @@
                         <OutputProfile>
                             <Name>default</Name>
                             <OutputStreamName>${OriginStreamName}</OutputStreamName>
+                            <Playlist>
+                                <Name>default</Name>
+                                <FileName>llhls.m3u8</FileName>
+                                <Rendition>
+                                    <Name>default</Name>
+                                    <Video>bypass_video</Video>
+                                    <Audio>bypass_audio</Audio>
+                                </Rendition>
+                            </Playlist>
                             <Encodes>
-                                <Audio>
-                                    <Bypass>true</Bypass>
-                                </Audio>
                                 <Video>
+                                    <Name>bypass_video</Name>
                                     <Bypass>true</Bypass>
                                 </Video>
+                                <Audio>
+                                    <Name>bypass_audio</Name>
+                                    <Bypass>true</Bypass>
+                                </Audio>
                             </Encodes>
                         </OutputProfile>
                     </OutputProfiles>
@@ -57,6 +68,10 @@
                                 <Stream>
                                     <Name>public-ll</Name>
                                     <Port>4000</Port>
+                                </Stream>
+                                <Stream>
+                                    <Name>private-ll</Name>
+                                    <Port>4001</Port>
                                 </Stream>
                             </StreamMap>
                         </MPEGTS>
