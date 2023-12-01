@@ -15,12 +15,12 @@ ffmpeg \
     -map '[v]' \
     -map 1 \
     -f tee -use_fifo 1 -y \
-    "[f=mpegts:onfail=ignore:select=\\'v:0,a:0\\']udp://127.0.0.1:4000"
+    "[f=mpegts:onfail=ignore:select=\\'v:0,a:0\\']tcp://127.0.0.1:4000"
 
 
 # Play stream
 - ffplay (seems no llhls support)
-`ffplay http://:3333/app/stream_4000/llhls.m3u8`
+`ffplay http://localhost:8000/stream/public-ll/llhls.m3u8`
 
 - ovenMedia player
 https://demo.ovenplayer.com/
