@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  encoder:
+    image:  linuxserver/ffmpeg:arm64v8-latest
+    entrypoint: /bin/sleep 1000
+    # command: sleep 1000
+    volumes: 
+    - ./:/usr/src/app
+  gpac:
+    image: swaglive/gpac@sha256:8f93ce6027331a298d22e1078bbb0d91d2c0c105e18d5ae24542522c2eacff01
+    entrypoint: /bin/sleep 1000 
+    volumes: 
+    - ./:/usr/src/app
+    ports:
+    - 8080:8080
+
+  nginx:
+    # image: nginx:latest
+    image: swaglive/nginx:1.25.4-alpine
+    volumes:
+    - ./config/nginx/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+    - 8081:80
+
