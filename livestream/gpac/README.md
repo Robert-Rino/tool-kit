@@ -117,7 +117,7 @@ cecrypt:SID=videos-private-dash:cfile=/Users/nino/Repository/tool-kit/cenc.xml:F
     'rfadts:SID=SOURCE#audio5:#Representation=audio-ll-ld:#Quality=ld:#HLSPL=$OType$-ll-$pname=Quality$.m3u8:FID=audio-public-sd' \
     'dasher:SID=video-public-ld,video-public-sd,audio-public-sd:title=public-ll:mname=public.mpd:template=$RepresentationID$-$Number%05d$$Init=00000$:FID=dashed-public-dash' \
     -o http://localhost:8080/public.mpd:SID=dashed-public-dash:rdirs=html:cors=on:reqlog=GET \
-    'dasher:SID=video-public-ld,video-public-sd,audio-public-sd:mname=public.m3u8:llhls=br:segdur=1.2:cdur=0.6:asto=0.6:template=$OType$-ll-$pname=Quality$-hls-$Number%05d$$Init=00000$:FID=dashed-public-hls' \
+    'dasher:SID=video-public-ld,video-public-sd,audio-public-sd:mname=public.m3u8:tsb=6:llhls=br:segdur=1.2:cdur=0.6:asto=0.6:template=$OType$-ll-$pname=Quality$-hls-$Number%05d$$Init=00000$:FID=dashed-public-hls' \
     -o http://localhost:8080/public.m3u8:SID=dashed-public-hls \
     'rfnalu:SID=SOURCE#video3:#Representation=video-ll-ld:#Quality=ld:#HLSPL=$OType$-ll-$pname=Quality$-cbcs.m3u8:FID=video-private-ld' \
     'rfnalu:SID=SOURCE#video4:#Representation=video-ll-sd:#Quality=sd:#HLSPL=$OType$-ll-$pname=Quality$-cbcs.m3u8:FID=video-private-sd' \
@@ -126,7 +126,7 @@ cecrypt:SID=videos-private-dash:cfile=/Users/nino/Repository/tool-kit/cenc.xml:F
     'dasher:SID=videos-private-encrypted-dash,audio-private-sd:pssh=mv:title=private:mname=private.mpd:template=$RepresentationID$-cenc-$Number%05d$$Init=00000$:FID=dashed-private-dash' \
     -o http://localhost:8080/private.mpd:SID=dashed-private-dash \
     'cecrypt:SID=video-private-ld,video-private-sd:cfile=/src/app/cbcs.xml:FID=videos-private-encrypted-hls::#HLSKey=skd://9A04F07998404286AB92E65BE0885F95,KEYFORMAT="com.apple.streamingkeydelivery",KEYFORMATVERSIONS=1' \
-    'dasher:SID=videos-private-encrypted-hls,audio-private-sd:mname=private.m3u8:llhls=br:segdur=1.2:cdur=0.6:asto=0.6:template=$OType$-ll-$pname=Quality$-cbcs-$Number%05d$$Init=00000$:FID=dashed-private-hls' \
+    'dasher:SID=videos-private-encrypted-hls,audio-private-sd:mname=private.m3u8:tsb=6:llhls=br:segdur=1.2:cdur=0.6:asto=0.6:template=$OType$-ll-$pname=Quality$-cbcs-$Number%05d$$Init=00000$:FID=dashed-private-hls' \
     -o http://localhost:8080/private.m3u8:SID=dashed-private-hls
     ```
 
