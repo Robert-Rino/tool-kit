@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   zookeeper:
@@ -19,6 +19,8 @@ services:
       - zookeeper
     ports:
       - "29092:29092"
+    volumes:
+    - ./config/server.properties:/etc/kafka/server.properties:ro
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
