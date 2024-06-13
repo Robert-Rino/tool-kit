@@ -8,8 +8,9 @@ Demonstrate how redis adaptor works with socket.io
 docker compose up
 ```
 
-`client.js`: Create socket to both `socketio-server-1` and `socketio-server-2`
-`server.js`: Initialize socket.io server and send message on `joinRoom` if environment variable `SEND_MESSAGE` is `true`
+- client.js: Create socket to both `socketio-server-1` and `socketio-server-2`
+
+- server.js: Initialize socket.io server and send message on `joinRoom` if environment variable `SEND_MESSAGE` is `true`
 
 You should see following output:
 ```sh
