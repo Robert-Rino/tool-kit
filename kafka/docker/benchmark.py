@@ -4,13 +4,14 @@ from confluent_kafka import KafkaException
 # - Create topics -
 broker = 'broker'
 admin_client = AdminClient({'bootstrap.servers': broker})
-topic_name = 'Benchmark_3000'
+topic_name = 'Benchmark_3000_compact'
 
 event_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1, config={
         'cleanup.policy': 'compact', # REF: https://kafka.apache.org/documentation.html#topicconfigs_cleanup.policy
         'retention.ms': 6000,
-        'delete.retention.ms': 6000,
+        # 'delete.retention.ms': 6000,
         'min.cleanable.dirty.ratio': 0.1,
+        'segment.bytes': 500,
 })
 
 fs = admin_client.create_topics([
@@ -32,15 +33,6 @@ import time
 from confluent_kafka import Producer
 
 p = Producer({'bootstrap.servers': 'broker'})
-events = [
-    {
-        'group': 'stream_online_status_ABC',
-        'event': 'stream.online',
-        'payload': {
-            'ts': int(time.time()),
-        },
-    },
-]
 
 def delivery_report(err, msg):
     if err is not None:
@@ -54,7 +46,7 @@ for i in range(3000):
     if i % 300 == 0:
         print(i, event_time)
 
-    key = str(i)
+    key = 'samekey'
     data = json.dumps({
         'group': 'stream_online_status_ABC',
         'event': 'stream.online',
@@ -74,9 +66,8 @@ for i in range(3000):
         callback=delivery_report,
     )
 
-    if i % 300 == 0:
-        print(i, event_time)
-        p.flush()
+    print(i, event_time)
+    p.flush()
 
 # Consume with python client
 import time
@@ -113,7 +104,8 @@ CREATE STREAM event_stream_3000 (
     `group` VARCHAR,
     `event` VARCHAR,
     `payload` VARCHAR,
-    `h1` BYTES HEADER('h1')
+    `h1` BYTES HEADER('h1'),
+    `channels` BYTES HEADER('channels')
 ) WITH (
     KAFKA_TOPIC='Benchmark_3000',
     VALUE_FORMAT='JSON'
@@ -128,3 +120,13 @@ FROM event_stream_3000
 WHERE CAST(EXTRACTJSONFIELD(`payload`, '$.count') AS INT) > 173500000
 EMIT CHANGES;
 
+
+# Create materialize stream for `private-user@USER_ID`
+CREATE STREAM PRIVATE_USER__USER_ID
+AS SELECT * FROM event_stream
+WHERE 'PRIVATE_USER__USER_ID' IN EXTRACTJSONFIELD(FROM_BYTES(`channels`, 'utf8'), '$.channels')
+WITH (
+    KAFKA_TOPIC='PRIVATE_USER__USER_ID',
+    VALUE_FORMAT='JSON',
+    PARTITIONS=1
+);
