@@ -4,7 +4,7 @@ from confluent_kafka import KafkaException
 # - Create topics -
 broker = 'broker'
 admin_client = AdminClient({'bootstrap.servers': broker})
-topic_name = 'Benchmark_3000_compact'
+topic_name = 'Benchmark_3000'
 
 event_topic = NewTopic(topic_name, num_partitions=1, replication_factor=1, config={
         'cleanup.policy': 'compact', # REF: https://kafka.apache.org/documentation.html#topicconfigs_cleanup.policy
