@@ -1,0 +1,40 @@
+version: "3.5"
+volumes:
+  nats-server-1:
+  nats-server-2:
+  nats-server-3:
+services:
+  nats-server-1:
+    image: nats:2.10.16-alpine3.19
+    ports:
+      - "8222:8222"
+    # command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --http_port 8222 "
+    volumes:
+    - ./configs/nats-server-1.conf:/etc/nats/nats-server.conf
+    - nats-server-1:/nats/storage
+  nats-server-2:
+    image: nats:2.10.16-alpine3.19
+    # command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    volumes:
+      - ./configs/nats-server-2.conf:/etc/nats/nats-server.conf
+      - nats-server-2:/nats/storage
+  nats-server-3:
+    image: nats:2.10.16-alpine3.19
+    # command: "--cluster_name NATS --cluster nats://0.0.0.0:6222 --routes=nats://ruser:T0pS3cr3t@nats:6222"
+    volumes:
+      - ./configs/nats-server-3.conf:/etc/nats/nats-server.conf
+      - nats-server-3:/nats/storage
+  nats-client-1:
+    image: natsio/nats-box:0.14.3
+    command: sleep infinite
+  nats-client-2:
+    image: natsio/nats-box:0.14.3
+    command: sleep infinite
+  nats-client-3:
+    image: natsio/nats-box:0.14.3
+    command: sleep infinite
+  nats-python-client:
+    build: .
+    command: sleep infinite
+    volumes:
+      - .:/usr/src
