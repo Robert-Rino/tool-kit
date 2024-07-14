@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ingress
+  labels:
+    app: ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingress
+  template:
+    metadata:
+      labels:
+        app: ingress
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17.0-alpine
+        ports:
+        - containerPort: 80
+          name: http
+        volumeMounts:
+        - name: config
+          subPath: nginx.conf
+          mountPath: /etc/nginx/nginx.conf
+          readOnly: true
+      volumes:
+      - name: config
+        configMap:
+          name: ingress
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingress
+spec:
+  type: NodePort
+  selector:
+    app: ingress
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress
+data:
+  nginx.conf: |
+    worker_processes                auto;
+    worker_cpu_affinity             auto;
+
+    events {
+      worker_connections            65536;
+      multi_accept                  off;
+      accept_mutex                  off;
+      use                           epoll;
+    }
+
+    http {
+      resolver                      metadata.google.internal valid=1h;
+
+      real_ip_header                X-Forwarded-For;
+      real_ip_recursive             on;
+
+      include                       mime.types;
+      default_type                  application/octet-stream;
+
+      server_names_hash_bucket_size 128;
+      tcp_nopush                    on;
+      tcp_nodelay                   on;
+      client_max_body_size          1M;
+
+      # https://blog.percy.io/tuning-nginx-behind-google-cloud-platform-http-s-load-balancer-305982ddb340
+      keepalive_timeout             650;
+      # keepalive_requests            10000;
+
+      proxy_cache_path              /var/cache/nginx levels=1:2 keys_zone=cache:128m inactive=10m max_size=64G;
+
+      limit_req_zone                $binary_remote_addr zone=ip:100m rate=6000r/m;
+      limit_req_status              429;
+
+      server {
+        listen                                        80 default_server;
+        server_name                                   _;
+
+        set                                           $vary "";
+
+        absolute_redirect                             off;
+
+        # Enable persistent upstream connections
+        proxy_http_version                            1.1;
+        # proxy_set_header                              Connection "";
+
+        proxy_method                                  GET;
+        proxy_pass_request_body                       off;
+        proxy_force_ranges                            on;
+
+        # Set proxy headers
+        proxy_set_header                              Host "$host";
+        proxy_set_header                              X-Forwarded-Host            $host;
+        proxy_set_header                              X-Forwarded-For             $proxy_add_x_forwarded_for;
+        proxy_set_header                              X-Forwarded-Proto           $http_x_forwarded_proto;
+        proxy_set_header                              X-Request-Id                $request_id;
+
+        # Enable proxy caching
+        proxy_cache                                   cache;
+        proxy_cache_use_stale                         updating;
+        proxy_cache_revalidate                        on;
+        proxy_cache_background_update                 on;
+        proxy_cache_lock                              on;
+        proxy_cache_lock_age                          5s;
+        proxy_cache_lock_timeout                      5s;
+        proxy_cache_convert_head                      on;
+
+        location ~/test {
+          return 200 'qqq!';
+        }
+
+        location / {
+          proxy_pass    http://app.default.svc.cluster.local:3000;
+        }
+      }
+    }
