@@ -1,9 +1,9 @@
 # Internal ingress service setup
 ```mermaid
 graph TD
-    A[ingress-gclb] --> B[service-ingress]
-    B -- / --> C[service-app]
-    B -- /api/ --> D[service-api]
+    ingress-gclb --> service-ingress
+    service-ingress -- / --> service-app
+    service-ingress -- /api/ --> service-api
 
 ```
 
