@@ -85,6 +85,11 @@ data:
       limit_req_zone                $binary_remote_addr zone=ip:100m rate=6000r/m;
       limit_req_status              429;
 
+
+      upstream api_backend {
+          server api.default.svc.cluster.local:3001;
+      }
+
       server {
         listen                                        80 default_server;
         server_name                                   _;
@@ -118,11 +123,15 @@ data:
         proxy_cache_lock_timeout                      5s;
         proxy_cache_convert_head                      on;
 
-        location ~/test {
+        location ~ /test {
           return 200 'qqq!';
         }
 
-        location / {
+        location ~ /api/(.*) {
+          proxy_pass    http://api_backend/$1;
+      }
+
+        location ~ / {
           proxy_pass    http://app.default.svc.cluster.local:3000;
         }
       }
