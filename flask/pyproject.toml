@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "flask-app"
+version = "0.1.0"
+description = ""
+authors = ["Robert-Rino <a901002666@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Flask = "^3.0.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
