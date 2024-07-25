@@ -1,3 +1,11 @@
+# Internal ingress service setup
+```mermaid
+graph TD
+    A[ingress-gclb] --> B[service-ingress]
+    B -- / --> C[service-app]
+    B -- /api/ --> D[service-api]
+
+```
 
 ## Create tls cert
 ```sh
