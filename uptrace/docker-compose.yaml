@@ -1,0 +1,106 @@
+version: '3'
+
+x-environment: &env
+    OTEL_EXPORTER_OTLP_ENDPOINT: http://otelcol:4317
+    POSTGRES_USER: uptrace
+    POSTGRES_PASSWORD: uptrace
+    POSTGRES_DB: uptrace
+    CLICKHOUSE_USER: uptrace
+    CLICKHOUST_PASSWORD: uptrace
+    CLICKHOUSE_DB: uptrace
+    UPTRACE_PROJECT_TOKEN: secret-token
+    OTEL_RESOURCE_ATTRIBUTES: 'deployment.environment=local'
+    OTEL_TRACES_SAMPLER: parentbased_traceidratio
+    OTEL_TRACES_SAMPLER_ARGS: '0.5'
+
+services:
+  api:
+    build: .
+    command: flask run --host 0.0.0.0 -p 8001 --reload
+    # command: > 
+    #   uwsgi 
+    #   --single-interpreter 
+    #   --enable-threads 
+    #   --ini config/uwsgi.ini
+    #   --processes 16
+    #   --gevent 100 
+    #   --http 0.0.0.0:8001
+    environment:
+      OTEL_SERVICE_NAME: api
+      <<: *env
+    volumes: 
+    - .:/usr/src/app
+    ports:
+      - 8001:8001
+  clickhouse:
+    image: clickhouse/clickhouse-server:22.10
+    environment:
+      CLICKHOUSE_DB: uptrace
+      <<: *env
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'localhost:8123/ping']
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    volumes:
+      - clicckhouse:/var/lib/clickhouse
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      <<: *env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "uptrace"]
+      interval: 1m
+      timeout: 1s
+      retries: 10
+      start_period: 0s
+    volumes:
+      - 'poasgres:/var/lib/postgresql/data/pgdata'
+    ports:
+      - '5432:5432'
+  uptrace:
+    image: 'uptrace/uptrace:1.5.2'
+    restart: on-failure
+    volumes:
+      - ./config/uptrace.yml:/etc/uptrace/uptrace.yml
+    ports:
+      - '14317:14317'
+      - '14318:14318'
+    environment:
+      <<: *env
+    depends_on:
+      - postgres
+      - clickhouse
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.81.0
+    volumes:
+      - ./config/otel-collector.yaml:/etc/otelcol-contrib/config.yaml
+    environment:
+      UPTRACE_DSN: "http://secret-token-swag@localhost:14317/1"
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - mongo:/data/db
+    ports: 
+      - 27017:27017
+  redis: 
+    image: redis:7.0.11-alpine
+    ports: 
+      - 6379:6379
+  worker:
+    build: .
+    command: celery -A app:celery_app worker -P gevent -c 10 --loglevel INFO 
+    volumes: 
+    - .:/usr/src/app
+    environment:
+      <<: *env
+
+volumes:
+  clicckhouse:
+  poasgres:
+  mongo:
