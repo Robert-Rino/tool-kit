@@ -1,0 +1,25 @@
+{
+    "mode": "full",
+    "debug": true,
+    "port": 6001,
+    "appManager.array.apps": [
+        {
+            "id": "some-id",
+            "key": "app-key",
+            "secret": "some-app-secret",
+            "webhooks": [
+                {
+                    "url": "https://b789-59-124-114-73.ngrok-free.app/debug",
+                    "event_types": ["channel_occupied", "channel_vacated", "member_added", "member_removed"]
+                }
+            ]
+        }
+    ],
+    "queue": {
+        "driver": "redis",
+        "redis": {
+            "concurrency": 1,
+            "clusterMode": false
+        }
+    }
+}
