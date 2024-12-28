@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: soketi
+  name: redis
+spec:
+  replicas: 1
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: sysctl/mm.transparent_hugepage.enabled
+                operator: In
+                values:
+                - never
+              - key: sysctl/mm.transparent_hugepage.defrag
+                operator: In
+                values:
+                - never
+      volumes:
+      - name: config
+        configMap:
+          name: redis
+      containers:
+      - name: redis
+        image: redis:7.2.5
+        command: ["redis-server"]
+        args: ["/etc/redis/redis.conf"]
+        startupProbe:
+          exec:
+            command: ["redis-cli", "-h", "127.0.0.1", "PING"]
+          initialDelaySeconds: 1
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        readinessProbe:
+          exec:
+            command: ["redis-cli", "-h", "127.0.0.1", "PING"]
+          periodSeconds: 5
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 5
+        ports:
+        - name: redis
+          containerPort: 6379
+        volumeMounts:
+        - name: config
+          subPath: redis.conf
+          mountPath: /etc/redis/redis.conf
+          readOnly: true
+        # resources:
+        #   requests:
+        #     cpu: 1500m
+        #     memory: 16G
+        #   limits:
+        #     memory: 16G

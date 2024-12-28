@@ -1,0 +1,185 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soket-server
+  namespace: soketi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: soketi-server
+  template:
+    metadata:
+      labels:
+        app: soketi-server
+    spec:
+      containers:
+      - name: soketi
+        image: quay.io/soketi/soketi:1.6-16-debian
+        command:
+        - node
+        - --max-old-space-size=256
+        - --max_old_space_size=256
+        - --optimize_for_size
+        - --optimize-for-size
+        - /app/bin/server.js
+        - --config=/etc/config/soketi.json
+        - start
+        env:
+        - name: SOKETI_PORT
+          value: "6001"
+        - name: SOKETI_MODE
+          value: server
+        - name: SOKETI_DB_REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: soketi
+              key: SOKETI_DB_REDIS_HOST
+        envFrom:
+        - secretRef:
+            name: soketi
+        image: quay.io/soketi/soketi:1.6-16-debian
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /
+            port: 6001
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /accept-traffic
+            port: 6001
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 6001
+          name: soketi
+          protocol: TCP
+        - containerPort: 9601
+          name: metrics
+          protocol: TCP
+        - containerPort: 11002
+          name: cluster
+          protocol: UDP
+        # resources:
+        #   limits:
+        #     cpu: 250m
+        #     memory: 256Mi
+        volumeMounts:
+        - mountPath: /etc/config
+          name: soketi
+      volumes:
+      - name: soketi 
+        configMap:
+          name: soketi
+      - name: soketi-secret
+        secret:
+          secretName: soketi
+        
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soket-worker
+  namespace: soketi
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: soketi-worker
+  template:
+    metadata:
+      labels:
+        app: soketi-worker
+    spec:
+      containers:
+      - name: soketi
+        image: quay.io/soketi/soketi:1.6-16-debian
+        command:
+        - node
+        - --max-old-space-size=256
+        - --max_old_space_size=256
+        - --optimize_for_size
+        - --optimize-for-size
+        - /app/bin/server.js
+        - --config=/etc/config/soketi.json
+        - start
+        env:
+        - name: SOKETI_PORT
+          value: "6001"
+        - name: SOKETI_MODE
+          value: worker
+        - name: SOKETI_DB_REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: soketi
+              key: SOKETI_DB_REDIS_HOST
+        envFrom:
+        - secretRef:
+            name: soketi
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /
+            port: 6001
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /ready
+            port: 6001
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 6001
+          name: soketi
+          protocol: TCP
+        - containerPort: 9601
+          name: metrics
+          protocol: TCP
+        - containerPort: 11002
+          name: cluster
+          protocol: UDP
+        # resources:
+        #   limits:
+        #     cpu: 250m
+        #     memory: 256Mi
+        volumeMounts:
+        - mountPath: /etc/config
+          name: soketi
+      volumes:
+      - name: soketi 
+        configMap:
+          name: soketi
+      - name: soketi-secret
+        secret:
+          secretName: soketi
