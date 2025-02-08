@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpa-scale-test
+spec:
+  selector:
+    matchLabels:
+      app: stress-test
+  template:
+    metadata:
+      labels:
+        app: stress-test
+    spec:
+      containers:
+        - name: stress
+          image: polinux/stress
+          command: ["stress"]
+          args: ["--cpu", "5", "--timeout", "600s"]
+        # - name: stress
+        #   image: polinux/stress:not-exists
+        #   command: ["stress"]
+        #   args: ["--cpu", "2", "--timeout", "600s"]
