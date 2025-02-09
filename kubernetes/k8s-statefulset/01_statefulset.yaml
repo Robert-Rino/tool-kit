@@ -34,7 +34,6 @@ spec:
       name: mongo-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "dev"
       resources:
         requests:
           storage: 8Gi
