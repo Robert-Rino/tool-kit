@@ -1,5 +1,5 @@
 # StorageClass
-- `retainPolicy`: Control pv behavior when pvc been deleted
+- `reclaimPolicy`: Control pv behavior when pvc been deleted
 - StorageClass object must be valid DNS subdomain name.
 - [`volumeBindingMode`](https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode): controls when volume binding and dynamic provisioning should occur. When unset, "Immediate" mode is used by default.
 
