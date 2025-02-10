@@ -1,27 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo-express-express
+  name: nginx-deployment
   labels:
-    app: mongo-express
+    app: nginx
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: mongo-express
+      app: nginx
   template:
     metadata:
       labels:
-        app: mongo-express
+        app: nginx
     spec:
+      # volumes:
+      # - name: vol
+      #   persistentVolumeClaim:
+      #     claimName: dev-pvc
       containers:
-      - name: mongo-express
-        image: mongo-express
+      - name: nginx
+        image: nginx:1.14.2
         ports:
-        - name: mongo-express
-          containerPort: 8081
-        env:
-        - name: ME_CONFIG_OPTIONS_EDITORTHEME
-          value: ambiance
-        - name: ME_CONFIG_MONGODB_URL
-          value: mongodb://admin:password@mongo-external.default.svc.cluster.local:27017
+        - containerPort: 80
+        # volumeMounts:
+        # - name: vol
+        #   mountPath: /tmp/persistent
+# ---
+# apiVersion: v1
+# kind: PersistentVolumeClaim
+# metadata:
+#   name: dev-pvc
+# spec:
+#   accessModes:
+#     - ReadWriteOnce
+#   resources:
+#     requests:
+#       storage: 8Gi
+
+
