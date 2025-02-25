@@ -8,7 +8,7 @@ data:
   SOKETI_DEBUG: "0"
   SOKETI_DB_REDIS_HOST: redis.soketi.svc.cluster.local
   SOKETI_DB_REDIS_KEY_PREFIX: soketi
-  SOKETI_DEFAULT_APP_WEBHOOKS: '[{"url": "http://swag-api.default.svc.cluster.local/notify/pusher", "event_types": ["member_added", "member_removed"]}]'
+  SOKETI_DEFAULT_APP_WEBHOOKS: '[{"url": "https://7939-59-124-114-73.ngrok-free.app/notify/pusher", "event_types": ["member_added", "member_removed"]}]'
   SOKETI_METRICS_ENABLED: "1"
   SOKETI_QUEUE_DRIVER: redis
   SOKETI_QUEUE_REDIS_CONCURRENCY: "10"
