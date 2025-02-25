@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nats
-          image: nats:2.10-linux
+          image: nats:2.10.25-alpine3.21
           args:
             - "-c"
             - "/etc/nats-config/nats.conf"
