@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gclb
+  namespace: soketi
+spec:
+  tls:
+  - secretName: nino.baby.tls
+    hosts:
+    - nino.baby
+  rules:
+  - host: nino.baby
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: soketi
+            port:
+              name: http
+    
