@@ -15,9 +15,10 @@
       disableStats: true,
       enabledTransports: ['ws', 'wss'],
       cluster: 'doesn-matter',
+      channelAuthorization: { endpoint: "https://90c4-36-229-144-27.ngrok-free.app/pusher/auth"},
     });
 
-    var channel = pusher.subscribe('nino-channel');
+    var channel = pusher.subscribe('presence-user@5795bd230c562f2783adc27b');
     channel.bind('my-event', function(data) {
       alert(JSON.stringify(data));
     });

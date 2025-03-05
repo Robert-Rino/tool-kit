@@ -5,10 +5,10 @@ metadata:
   namespace: soketi
 data:
   # REF: https://github.com/soketi/soketi/blob/master/src/cli/cli.ts
-  SOKETI_DEBUG: "0"
+  SOKETI_DEBUG: "1"
   SOKETI_DB_REDIS_HOST: redis.soketi.svc.cluster.local
   SOKETI_DB_REDIS_KEY_PREFIX: soketi
-  SOKETI_DEFAULT_APP_WEBHOOKS: '[{"url": "https://7939-59-124-114-73.ngrok-free.app/notify/pusher", "event_types": ["member_added", "member_removed"]}]'
+  SOKETI_DEFAULT_APP_WEBHOOKS: '[{"url": "https://90c4-36-229-144-27.ngrok-free.app/notify/pusher", "event_types": ["member_added", "member_removed"]}]'
   SOKETI_METRICS_ENABLED: "1"
   SOKETI_QUEUE_DRIVER: redis
   SOKETI_QUEUE_REDIS_CONCURRENCY: "10"
