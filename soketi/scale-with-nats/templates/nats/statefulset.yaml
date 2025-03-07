@@ -15,6 +15,21 @@ spec:
         app: nats
     spec:
       containers:
+        - name: prometheus-exporter
+          image: natsio/prometheus-nats-exporter:0.16.0
+          args:
+          - "-varz"
+          - "http://nats:8222"
+          ports:
+            - containerPort: 7777
+              name: metrics
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
         - name: nats
           image: nats:2.10.25-alpine3.21
           args:

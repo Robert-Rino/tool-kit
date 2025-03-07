@@ -8,8 +8,8 @@ data:
     server_name: $POD_NAME
 
     # Log
-    debug:   true
-    trace:   true
+    # debug:   true
+    # trace:   true
     logtime: true
 
     # Client listener

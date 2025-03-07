@@ -1,0 +1,16 @@
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: soketi-prom
+  namespace: soketi
+spec:
+  selector:
+    matchExpressions:
+    - key: app
+      operator: In
+      values:
+      - soketi-server
+      - soketi-worker
+  endpoints:
+  - port: metrics
+    interval: 30s
