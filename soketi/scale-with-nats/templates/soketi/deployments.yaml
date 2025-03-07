@@ -28,6 +28,8 @@ spec:
           value: "6001"
         - name: SOKETI_MODE
           value: full
+        - name: SOKETI_QUEUE_REDIS_CONCURRENCY
+          value: "0"
         envFrom:
         - secretRef:
             name: soketi
@@ -106,6 +108,8 @@ spec:
           value: "6002"
         - name: SOKETI_MODE
           value: worker
+        - name: SOKETI_QUEUE_REDIS_CONCURRENCY
+          value: "10"
         envFrom:
         - secretRef:
             name: soketi
