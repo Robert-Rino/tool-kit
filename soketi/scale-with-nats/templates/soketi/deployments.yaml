@@ -1,0 +1,157 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soketi-server
+  namespace: soketi
+spec:
+  selector:
+    matchLabels:
+      app: soketi-server
+  template:
+    metadata:
+      labels:
+        app: soketi-server
+    spec:
+      containers:
+      - name: soketi
+        image: quay.io/soketi/soketi:1.6-16-alpine
+        command:
+        - node
+        - --max-old-space-size=256
+        - --max_old_space_size=256
+        - --optimize_for_size
+        - --optimize-for-size
+        - /app/bin/server.js
+        - start
+        env:
+        - name: SOKETI_PORT
+          value: "6001"
+        - name: SOKETI_MODE
+          value: full
+        - name: SOKETI_QUEUE_REDIS_CONCURRENCY
+          value: "0"
+        envFrom:
+        - secretRef:
+            name: soketi
+        - configMapRef:
+            name: soketi
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /
+            port: 6001
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /accept-traffic
+            port: 6001
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 6001
+          name: soketi
+          protocol: TCP
+        - containerPort: 9601
+          name: metrics
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: soketi-worker
+  namespace: soketi
+spec:
+  progressDeadlineSeconds: 600
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: soketi-worker
+  template:
+    metadata:
+      labels:
+        app: soketi-worker
+    spec:
+      containers:
+      - name: soketi
+        image: quay.io/soketi/soketi:1.6-16-alpine
+        command:
+        - node
+        - --max-old-space-size=256
+        - --max_old_space_size=256
+        - --optimize_for_size
+        - --optimize-for-size
+        - /app/bin/server.js
+        - start
+        env:
+        - name: SOKETI_PORT
+          value: "6002"
+        - name: SOKETI_MODE
+          value: worker
+        - name: SOKETI_QUEUE_REDIS_CONCURRENCY
+          value: "10"
+        envFrom:
+        - secretRef:
+            name: soketi
+        - configMapRef:
+            name: soketi
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /
+            port: 6002
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 1
+          httpGet:
+            httpHeaders:
+            - name: X-Kube-Healthcheck
+              value: "Yes"
+            path: /ready
+            port: 6002
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 1
+        ports:
+        - containerPort: 6002
+          name: soketi
+          protocol: TCP
+        - containerPort: 9601
+          name: metrics
+          protocol: TCP
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi

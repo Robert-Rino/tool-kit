@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nats-debug
+  namespace: soketi # Match your NATS cluster namespace
+  labels:
+    app: nats-debug
+spec:
+  containers:
+    - name: nats-tools
+      image: natsio/nats-box:latest # Official NATS CLI image
+      command: ["/bin/sh", "-c", "sleep infinity"] # Keeps pod running
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "128Mi"
+        limits:
+          cpu: "200m"
+          memory: "256Mi"
+  restartPolicy: Never # No restarts needed for debug
+
+
+
+# nats pub test "Hello" --server nats:4222
+# nats sub test --server nats:4222
