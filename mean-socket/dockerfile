@@ -1,0 +1,7 @@
+FROM        node:17
+
+WORKDIR     /usr/app/
+COPY        app.js /user/app
+
+RUN         npm install express
+CMD         node app.js
