@@ -3,6 +3,9 @@ kind: Service
 metadata:
   namespace: soketi
   name: soketi
+  annotations:
+    cloud.google.com/backend-config: '{"default": "websocket"}'
+    cloud.google.com/neg: '{"ingress": true}'
 spec:
   selector:
     app: soketi-server
