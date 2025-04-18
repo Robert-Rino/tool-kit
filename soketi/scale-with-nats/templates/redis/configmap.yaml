@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: soketi
+  name: redis
+data:
+  redis.conf: |-
+    maxmemory-policy allkeys-lru
+    maxmemory 2gb
+    loglevel verbose
+
+    io-threads 4
+
+    client-output-buffer-limit pubsub 256mb 256mb 3600
+
+    lazyfree-lazy-eviction yes
+    lazyfree-lazy-expire yes
+    lazyfree-lazy-server-del yes
+
+    maxclients 50000
+    tcp-keepalive 60
+
+    repl-backlog-size 100mb
+
+    save ""
+
+    appendonly no
+    aof-use-rdb-preamble yes
+    auto-aof-rewrite-percentage 100
+    auto-aof-rewrite-min-size 64mb

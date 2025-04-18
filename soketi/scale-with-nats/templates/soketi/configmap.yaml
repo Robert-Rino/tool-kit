@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: soketi
+  namespace: soketi
+data:
+  # REF: https://github.com/soketi/soketi/blob/master/src/cli/cli.ts
+  SOKETI_DEBUG: "1"
+  SOKETI_DB_REDIS_HOST: redis.soketi.svc.cluster.local
+  SOKETI_DB_REDIS_KEY_PREFIX: soketi
+  SOKETI_DEFAULT_APP_WEBHOOKS: '[{"url": "https://a418-59-124-114-73.ngrok-free.app/notify/pusher", "event_types": ["member_added", "member_removed"]}]'
+  SOKETI_METRICS_ENABLED: "1"
+  SOKETI_QUEUE_DRIVER: redis
+  SOKETI_QUEUE_REDIS_CONCURRENCY: "10"
+  SOKETI_QUEUE_REDIS_CLUSTER_MODE: "0"
+  SOKETI_WEBHOOKS_BATCHING: "1"
+  SOKETI_WEBHOOKS_BATCHING_DURATION: "500"
+  SOKETI_ADAPTER_DRIVER: nats
+  # SOKETI_ADAPTER_REDIS_PREFIX: soketi-adapter
+  SOKETI_ADAPTER_NATS_PREFIX: soketi
+  SOKETI_ADAPTER_NATS_SERVERS: '["nats-0.nats.soketi.svc.cluster.local:4222", "nats-1.nats.soketi.svc.cluster.local:4222", "nats-2.nats.soketi.svc.cluster.local:4222"]'
+  SOKETI_PRESENCE_MAX_MEMBERS: "100"
+  # NOTE: In KB
+  SOKETI_PRESENCE_MAX_MEMBER_SIZE: "10"
+

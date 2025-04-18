@@ -1,0 +1,12 @@
+apiVersion: monitoring.googleapis.com/v1
+kind: PodMonitoring
+metadata:
+  name: nats-prom
+  namespace: soketi
+spec:
+  selector:
+    matchLabels:
+      app: nats
+  endpoints:
+  - port: metrics
+    interval: 30s
