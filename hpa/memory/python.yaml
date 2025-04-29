@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: example-memory-hpa
+spec:
+  selector:
+    matchLabels:
+      run: example-memory-hpa
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: example-memory-hpa
+    spec:
+      containers:
+      - name: example-memory-hpa
+        image: python:3.10
+        command: ["sh"]
+        args: ["-c", "tail -f /dev/null" ]
+      # # command: ["sh -c tail -f /dev/null"]
+      #   command: ["sh -c tail -f /dev/null"]
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: example-memory-hpa
+  labels:
+    run: example-memory-hpa
+spec:
+  ports:
+  - port: 80
+  selector:
+    run: example-memory-hpa
+
