@@ -13,4 +13,12 @@
 
 in shell
 
+
 `nats request --reply-timeout=1000ms -s nats-0.nats.soketi.svc.cluster.local:4222 '$SYS.REQ.SERVER.PING.CONNZ' ''`
+
+subscribe requestChannel
+`nats subscribe -s nats-0.nats.soketi.svc.cluster.local:4222 'soketi#nats-adapter#comms#req'`
+
+subscribe responseChannel
+`nats subscribe -s nats-0.nats.soketi.svc.cluster.local:4222 'soketi#nats-adapter#comms#res'`
+
