@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  k6-load-test:
+    build: .
+    command: ["run", "--verbose", "loadtest.js"] # Add verbose flag
+    volumes:
+      - ./loadtest.js:/scripts/loadtest.js
+    env_file: .env
+  
