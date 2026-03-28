@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udp-app-srt
+  labels:
+    app: ingest-srs-v5-srt
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingest-srs-v5
+      protocol: udp
+  template:
+    metadata:
+      labels:
+        app: ingest-srs-v5
+        protocol: udp
+    spec:
+      containers:
+      - name: app
+        image: a901002666/k8s-udp-session-affanity:udp
+        # env:
+        # - name: LB_IP
+        #   value: '10.8.7.210'
+        ports:
+        - name: srt
+          protocol: UDP
+          containerPort: 10080
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udp-app-rtmp
+  labels:
+    app: ingest-srs-v5-rtmp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ingest-srs-v5
+      protocol: tcp
+  template:
+    metadata:
+      labels:
+        app: ingest-srs-v5
+        protocol: tcp
+    spec:
+      containers:
+      - name: app
+        image: a901002666/k8s-udp-session-affanity:tcp
+        # env:
+        # - name: LB_IP
+        #   value: '10.8.7.210'
+        ports:
+        - name: rtmp
+          containerPort: 1935

@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: default
+  name: ingest-srs-v5
+  labels:
+    app.kubernetes.io/name: livestream
+  # annotations:
+  #   cloud.google.com/l4-rbs: "enabled"
+spec:
+  type: NodePort
+  # externalTrafficPolicy: Cluster
+  selector:
+    app: ingest-srs-v5
+  ports:
+  - name: rtmp
+    protocol: TCP
+    port: 1935
+    targetPort: rtmp
+  - name: srt
+    protocol: UDP
+    port: 10080
+    targetPort: srt
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingest-srs-v5-external-tcp
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: livestream
+  ports:
+  - port: 1935
+    targetPort: 1935
+    protocol: TCP
+  loadBalancerIP: "35.221.161.73"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ingest-srs-v5-external-udp
+spec:
+  type: LoadBalancer
+  selector:
+    app.kubernetes.io/name: livestream
+  ports:
+  - port: 10080
+    targetPort: 10080
+    protocol: UDP
+  loadBalancerIP: "35.221.161.73"
