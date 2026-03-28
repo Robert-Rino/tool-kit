@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "flask-example"
+version = "0.1.0"
+description = ""
+authors = ["Robert-Rino <a901002666@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "2.2.3"
+opentelemetry-exporter-otlp = "^1.18.0"
+opentelemetry-distro = "^0.39b0"
+opentelemetry-exporter-otlp-proto-grpc = "^1.18.0"
+opentelemetry-exporter-otlp-proto-http = "^1.18.0"
+opentelemetry-instrumentation-flask = "^0.39b0"
+uwsgi = "^2.0.21"
+gevent = "^22.10.2"
+mongoengine = "^0.27.0"
+celery = "^5.3.1"
+flask-mongoengine = "^1.0.0"
+opentelemetry-instrumentation-pymongo = "^0.39b0"
+redis = {extras = ["hiredis"], version = "^4.5.5"}
+opentelemetry-instrumentation-celery = "^0.39b0"
+
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

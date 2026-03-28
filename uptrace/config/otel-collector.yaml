@@ -1,0 +1,54 @@
+# REF: https://opentelemetry.io/docs/collector/configuration/
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+processors:
+  batch:
+    send_batch_size: 10000
+    timeout: 10s
+  cumulativetodelta:
+  resourcedetection:
+    detectors:
+    - env
+    - system
+
+exporters:
+  otlp:
+    endpoint: uptrace:14317
+    headers:
+      uptrace-dsn: '${env:UPTRACE_DSN}'
+    tls:
+      insecure: true
+  logging:
+    loglevel: info
+
+service:
+  pipelines:
+    traces:
+      receivers:
+      - otlp
+      processors:
+      - batch
+      exporters:
+      - otlp
+      - logging
+    metrics:
+      receivers:
+      - otlp
+      processors:
+      - batch
+      exporters:
+      - otlp
+      - logging
+    logs:
+      receivers:
+      - otlp
+      processors:
+      - batch
+      exporters:
+      - otlp
+      - logging
